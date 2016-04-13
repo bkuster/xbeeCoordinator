@@ -22,6 +22,8 @@ from datetime import datetime
 import json
 import numpy as np
 from pathlib import Path
+import logging
+import argparse
 np.set_printoptions(suppress = True) # to suppres scientific writing
 
 # MPI
@@ -47,7 +49,16 @@ comm = MPI.COMM_WORLD
 size = comm.Get_size()
 rank = comm.Get_rank()
 status = MPI.Status()
+# -----------------------------------------------------------------------------
+# command line args and logging
+parser = argparse.ArgumentParser()
+parser.add_argument('--url', required=True, help='URL of the SOS')
+parser.add_argument('--log', help='defines the log level', choices=['DEBUG', 'INFO', 'WARNING'], default='WARNING')
+parser.add_argument('--usb', help='serial usb port', default='/dev/ttyUSB0')
 
+commandLineArgs = vars(parser.parse_args())
+
+logging.basicConfig(filename='./log/log', format='%(asctime)s %(levelname)s: %(message)s', level=commandLineArgs['log'])
 # -----------------------------------------------------------------------------
 # Rank 0 :  THE QUEEN   - Dumps XBee frames
 # Rank 1 :  THE GUARD   - Handles errors & requests. Does some data insertion
@@ -58,11 +69,9 @@ if rank == 0:
     import serial
     from xbee import XBee, ZigBee
 
-    print("Queen initialization...")
-
     # Make worker directories
-    paths = [Path('./temp/guard/')]
-    #paths = ['./temp/guard', './temp/guard/error']
+    paths = [Path('./temp/guard/'), Path('./log')]
+
     for i in range(2,size):
         paths.append(Path('./temp/worker{0}/'.format(size-i)))
 
@@ -70,7 +79,10 @@ if rank == 0:
         try:
             path.mkdir(parents=True)
         except:
-            print("Folder {0} allready exists".format(path))
+            continue
+
+    paths.remove(Path('./temp/guard'))
+    paths.remove(Path('./log'))
 
     # --------------------------------------------------------------------------
     # FUNCTION dumps
@@ -92,7 +104,6 @@ if rank == 0:
                 json.dump(obj, f)
             paths.insert(0, path)
         else:
-            print("sensor active")
             err_path = Path('./temp/guard/' + stamp)
             with err_path.open('w') as f:
                 json.dump(obj, f)
@@ -100,10 +111,10 @@ if rank == 0:
 
 
     # init xbee
-    ser = serial.Serial('/dev/cu.usbserial-DA017S4F', 115200)
+    ser = serial.Serial(commandLineArgs['usb'], 115200)
     xbee = ZigBee(ser, escaped=True, callback=dumping)
     # Go
-    print("Queen active!")
+    logging.INFO('Queen active')
     while True:
         try:
             while not comm.Iprobe(source = MPI.ANY_SOURCE, tag = MPI.ANY_TAG):
@@ -119,19 +130,19 @@ if rank == 0:
     # close it, otherwise you get errors when shutting down
     xbee.halt()
     ser.close()
+    logging.info('Stopped')
+    logging.info('====================================')
 
 elif rank == 1:
-    print("Guard initialization...")
     from guard import guard
     guard_bee = guard('http://quader.igg.tu-berlin.de/istsos/demo', comm)
-    print("Guard ready!")
+    logging.debug('Guard running')
     guard_bee.routine()
 
 elif rank > 1:
     number = comm.Get_size() - rank
-    print("Worker #{0} initialization...".format(number))
     import worker
     worker_bee = worker.bee(number)
 
-    print("Worker #{0} Ready!".format(number))
+    logging.debug("Worker #{0} Ready!".format(number))
     worker_bee.routine()

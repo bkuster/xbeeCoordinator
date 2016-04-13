@@ -14,6 +14,7 @@
 import struct
 from pathlib import Path
 import time
+import sys
 
 # TODO not needed, just for testing
 import json
@@ -154,7 +155,10 @@ class bee():
             cur.execute(query[:-1]) # -1 for last ,
             self.__conn.commit()
         except:
-            print("couldn't insert")
+            logging.warning('insert error')
+            e = sys.exec_info()[0]
+            logging.warning(e)
+            logging.warning(query)
         cur.close()
 
     # --------------------------------------------------------------------------

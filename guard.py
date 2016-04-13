@@ -113,7 +113,8 @@ class guard():
     # --------------------------------------------------------------------------
     # raises the error, via WNS? and others...
     def __raise_error(self):
-        print('sww')
+        logging.debug('got an error:')
+        logging.debug(self.__frame) # TODO should be warning
 
     # --------------------------------------------------------------------------
     # unlink all
@@ -145,7 +146,7 @@ class guard():
         macs = cur.fetchall()
         for i in macs:
             if(self.__mac == i[0]):
-                print('sensor is registered!')
+                logging.debug('sensor was registered')
                 self.__unlink_all()
                 self.__comm.send([self.__frame['source_addr_long'], self.__frame['source_addr']], dest=0, tag=tags.GO)
 
@@ -359,7 +360,11 @@ class guard():
         cur = self.__conn.cursor()
         cur.execute(open('./resources/sql/get_data.sql').read().format(**self.__xml_dict))
         data = cur.fetchall()
-        data = np.array(data, ndmin=2).reshape(int(self.__check_table[0,1]), (self.__observed_properties.shape[0])-1) # 1.is count, 2. is properties - time
+        try:
+            data = np.array(data, ndmin=2).reshape(int(self.__check_table[0,1]), (self.__observed_properties.shape[0])-1) # 1.is count, 2. is properties - time
+        except:
+            logging.warning('weird data array')
+            logging.warning(data)
 
         # get time stamps accordingly
         cur.execute(open('./resources/sql/get_time.sql').read().format(**self.__xml_dict))
@@ -420,7 +425,7 @@ class guard():
                 notDelte = False
             except:
                 sleep(1)
-    
+
         self.__conn.commit()
         cur.close()
 
