@@ -157,7 +157,7 @@ class bee():
             self.__conn.commit()
         except:
             logging.warning('insert error')
-            e = sys.exec_info()[0]
+            e = sys.exc_info()[0]
             logging.warning(e)
             logging.warning(query)
         cur.close()
