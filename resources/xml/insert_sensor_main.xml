@@ -1,0 +1,93 @@
+<sos:RegisterSensor
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:om="http://www.opengis.net/om/1.0"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:sos="http://www.opengis.net/sos/1.0"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="SOS" version="1.0.0"
+    xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosAll.xsd">
+    <sos:SensorDescription>
+        <sml:member>
+            <sml:System gml:id="{sensor_type}-{serial}">
+                <gml:name>{sensor_type}-{serial}</gml:name>
+                <!-- <sml:keywords>
+                    <sml:KeywordList>
+                        <sml:keyword>IMU</sml:keyword>
+                    </sml:KeywordList>
+                </sml:keywords> -->
+                <!-- <sml:identification>
+                    <sml:IdentifierList>
+                        <sml:identifier name="Device ID">
+                            <sml:Term definition="urn:x-ogc:def:identifier:x-istsos:1.0:deviceID">
+                                <sml:value>{mac}</sml:value>
+                            </sml:Term>
+                        </sml:identifier>
+                    </sml:IdentifierList>
+                </sml:identification> -->
+                <sml:classification>
+                    <sml:ClassifierList>
+                        <sml:classifier name="System Type">
+                            <sml:Term definition="urn:ogc:def:classifier:x-istsos:1.0:systemType">
+                                <sml:value>{system_type}</sml:value>
+                            </sml:Term>
+                        </sml:classifier>
+                        <sml:classifier name="Sensor Type">
+                            <sml:Term definition="urn:ogc:def:classifier:x-istsos:1.0:sensorType">
+                                <sml:value>{sensor_type}</sml:value>
+                            </sml:Term>
+                        </sml:classifier>
+                    </sml:ClassifierList>
+                </sml:classification>
+                <sml:capabilities>
+                    <swe:DataRecord/>
+                </sml:capabilities>
+                <sml:location>
+                    <gml:Point srsName="EPSG:{epsg}" gml:id="{foi_name}">
+                        <gml:coordinates>52.513017,13.331000,19.03</gml:coordinates>
+                    </gml:Point>
+                </sml:location>
+                <sml:outputs>
+                    <sml:OutputList>
+                        <sml:output name="output data">
+                            <swe:DataRecord definition="urn:ogc:def:dataType:x-istsos:1.0:timeSeries">
+                                {data_array_inner}
+                            </swe:DataRecord>
+                        </sml:output>
+                    </sml:OutputList>
+                </sml:outputs>
+            </sml:System>
+        </sml:member>
+    </sos:SensorDescription>
+    <sos:ObservationTemplate>
+        <om:Observation>
+            <om:procedure xlink:href="urn:ogc:object:procedure:x-istsos:1.0:{sensor_type}-{serial}"/>
+            <om:samplingTime>
+                <gml:TimePeriod>
+                    <gml:beginPosition/>
+                    <gml:endPosition/>
+                </gml:TimePeriod>
+            </om:samplingTime>
+            <om:observedProperty>
+                    {composite_phenomenon}
+            </om:observedProperty>
+            <om:featureOfInterest xlink:href="{foi_name}">
+                <gml:FeatureCollection>
+                    <gml:location>
+                        <gml:Point srsName="EPSG:{epsg}" gml:id="gmlfoi_{foi_name}">
+                            <gml:coordinates>1,1,1</gml:coordinates>
+                        </gml:Point>
+                    </gml:location>
+                </gml:FeatureCollection>
+            </om:featureOfInterest>
+            <om:result>
+                <swe:DataArray>
+                    {data_array_header}
+                    <swe:encoding>
+                        <swe:TextBlock blockSeparator="@" decimalSeparator="." tokenSeparator=","/>
+                    </swe:encoding>
+                </swe:DataArray>
+            </om:result>
+        </om:Observation>
+    </sos:ObservationTemplate>
+</sos:RegisterSensor>

@@ -1,0 +1,3 @@
+<swe:CompositePhenomenon dimension="{count}">
+    {body}
+</swe:CompositePhenomenon>

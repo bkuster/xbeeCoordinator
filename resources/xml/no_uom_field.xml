@@ -1,0 +1,3 @@
+<swe:field name="{name}">
+    <swe:Time definition="{urn}"/>
+</swe:field>

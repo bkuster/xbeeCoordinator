@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sos:InsertObservation
+  xmlns:gml="http://www.opengis.net/gml"
+  xmlns:om="http://www.opengis.net/om/1.0"
+  xmlns:sos="http://www.opengis.net/sos/1.0"
+  xmlns:swe="http://www.opengis.net/swe"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://schemas.opengis.net/sos/1.0.0/sosAll.xsd"
+  service="SOS" version="1.0.0">
+  <sos:AssignedSensorId>{id}</sos:AssignedSensorId>
+  <sos:ForceInsert>true</sos:ForceInsert>
+  <om:Observation>
+    <om:procedure xlink:href="{procedure}"/>
+    <om:samplingTime>
+        <gml:TimePeriod>
+            <gml:beginPosition>{begin}Z</gml:beginPosition>
+            <gml:endPosition>{end}Z</gml:endPosition>
+        </gml:TimePeriod>
+    </om:samplingTime>
+    <om:observedProperty>
+        {composite_phenomenon}
+    </om:observedProperty>
+    <om:featureOfInterest xlink:href="{foi}"/>
+    <om:result>
+        <swe:DataArray>
+            {data_array_header}
+            <swe:encoding>
+                <swe:TextBlock blockSeparator=";" decimalSeparator="." tokenSeparator=","/>
+            </swe:encoding>
+                <swe:values>{data}</swe:values>
+        </swe:DataArray>
+    </om:result>
+  </om:Observation>
+</sos:InsertObservation>

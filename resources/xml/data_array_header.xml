@@ -1,0 +1,8 @@
+<swe:elementCount>
+    <swe:value>{count}</swe:value>
+</swe:elementCount>
+<swe:elementType name="SimpleDataArray">
+    <swe:DataRecord definition="urn:ogc:def:dataType:x-istsos:1.0:timeSeries">
+        {body}
+    </swe:DataRecord>
+</swe:elementType>

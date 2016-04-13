@@ -1,0 +1,5 @@
+<swe:field name="{name}">
+    <swe:Quantity definition="{urn}">
+        <swe:uom code="{uom}"/>
+    </swe:Quantity>
+</swe:field>
