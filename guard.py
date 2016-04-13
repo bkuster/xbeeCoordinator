@@ -17,6 +17,7 @@
 import sqlite3
 import time
 import re
+import logging
 
 # OSWlib stuff
 from owslib.sos import SensorObservationService
@@ -422,9 +423,9 @@ class guard():
         while notDelete:
             try:
                 cur.execute(open('./resources/sql/delete_inserted.sql').read().format(**self.__xml_dict))
-                notDelte = False
+                notDelete = False
             except:
-                sleep(1)
+                time.sleep(1)
 
         self.__conn.commit()
         cur.close()

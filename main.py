@@ -70,7 +70,7 @@ if rank == 0:
     from xbee import XBee, ZigBee
 
     # Make worker directories
-    paths = [Path('./temp/guard/'), Path('./log')]
+    paths = [Path('./temp/guard/')]
 
     for i in range(2,size):
         paths.append(Path('./temp/worker{0}/'.format(size-i)))
@@ -135,7 +135,7 @@ if rank == 0:
 
 elif rank == 1:
     from guard import guard
-    guard_bee = guard('http://quader.igg.tu-berlin.de/istsos/demo', comm)
+    guard_bee = guard(commandLineArgs['url'], comm)
     logging.debug('Guard running')
     guard_bee.routine()
 

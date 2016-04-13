@@ -15,6 +15,7 @@ import struct
 from pathlib import Path
 import time
 import sys
+import logging
 
 # TODO not needed, just for testing
 import json
@@ -103,7 +104,7 @@ class bee():
         data = self.__frame['rf_data']
 
         if data.pop(0) != 1:
-            print('GOT NO DATA')
+            logging.warning('GOT NO DATA')
             return
 
         # get the time offset
